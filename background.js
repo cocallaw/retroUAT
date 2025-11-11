@@ -76,9 +76,20 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     // Wait for the page to load and retry finding the ADO link
     const maxRetries = 10;
     const retryDelay = 500; // milliseconds
+    let hasRedirected = false;
 
     async function findAdoLink(attempt = 1) {
+      // Stop if we've already redirected
+      if (hasRedirected) return;
+
       try {
+        // Check if the tab still exists and is on the Feedback360 page
+        const currentTab = await chrome.tabs.get(tabId);
+        if (!currentTab || !currentTab.url || !currentTab.url.includes('feedback360.microsoft.com')) {
+          console.log('Tab no longer on Feedback360 page, stopping retry');
+          return;
+        }
+
         const results = await chrome.scripting.executeScript({
           target: { tabId: tabId },
           func: () => {
@@ -102,6 +113,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const linkData = results[0]?.result;
         
         if (linkData) {
+          hasRedirected = true;
           const adoUrl = linkData.href;
           const workItemId = linkData.workItemId;
           console.log(`Redirecting Feedback360 to: ${adoUrl} (found on attempt ${attempt})`);
@@ -121,6 +133,12 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           console.log("ADO link not found on Feedback360 page after maximum retries");
         }
       } catch (error) {
+        // Check if error is due to tab navigation
+        if (error.message && error.message.includes('Cannot access contents')) {
+          console.log('Tab has navigated away, stopping retry');
+          hasRedirected = true;
+          return;
+        }
         console.error("Error extracting ADO link:", error);
       }
     }
