@@ -18,9 +18,15 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     const redirectUrl = `${DESTINATION_BASE}${id}`;
     console.log(`Redirecting to: ${redirectUrl}`);
 
-    // Store history
+    // Store history with timestamp
     const { history = [] } = await chrome.storage.local.get("history");
-    const newHistory = [id, ...history.filter(i => i !== id)].slice(0, 5);
+    const newEntry = { id, timestamp: Date.now() };
+    // Filter out any existing entry with the same ID (handle both old and new formats)
+    const filteredHistory = history.filter(i => {
+      const entryId = typeof i === 'object' ? i.id : i;
+      return entryId !== id;
+    });
+    const newHistory = [newEntry, ...filteredHistory].slice(0, 5);
     await chrome.storage.local.set({ history: newHistory });
 
     chrome.tabs.update(tabId, { url: redirectUrl });
