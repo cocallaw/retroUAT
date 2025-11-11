@@ -82,15 +82,28 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
         const results = await chrome.scripting.executeScript({
           target: { tabId: tabId },
           func: () => {
-            const adoLink = document.querySelector('button[aria-label="ADO Id link"] a[name]');
-            return adoLink ? adoLink.getAttribute('name') : null;
+            // Find the label with for="link-AdoId"
+            const label = document.querySelector('label[for="link-AdoId"]');
+            if (label) {
+              // Get the parent div and find the anchor tag within it
+              const parentDiv = label.parentElement;
+              const adoLink = parentDiv ? parentDiv.querySelector('a[href*="dev.azure.com"]') : null;
+              if (adoLink) {
+                return {
+                  href: adoLink.href,
+                  workItemId: adoLink.getAttribute('name')
+                };
+              }
+            }
+            return null;
           }
         });
 
-        const workItemId = results[0]?.result;
+        const linkData = results[0]?.result;
         
-        if (workItemId) {
-          const adoUrl = `https://dev.azure.com/unifiedactiontracker/Technical%20Feedback/_workitems/edit/${workItemId}`;
+        if (linkData) {
+          const adoUrl = linkData.href;
+          const workItemId = linkData.workItemId;
           console.log(`Redirecting Feedback360 to: ${adoUrl} (found on attempt ${attempt})`);
 
           // Store history with timestamp
