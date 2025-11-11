@@ -28,9 +28,22 @@ document.addEventListener("DOMContentLoaded", async () => {
       return;
     }
 
-    history.forEach(id => {
+    history.forEach(entry => {
+      // Handle both old format (just ID) and new format (object with id and timestamp)
+      const id = typeof entry === 'object' ? entry.id : entry;
+      const timestamp = typeof entry === 'object' && entry.timestamp ? entry.timestamp : null;
+      
       const li = document.createElement("li");
-      li.innerHTML = `<a href="https://dev.azure.com/unifiedactiontracker/Unified%20Action%20Tracker/_workitems/edit/${id}" target="_blank">${id}</a>`;
+      const link = `<a href="https://dev.azure.com/unifiedactiontracker/Unified%20Action%20Tracker/_workitems/edit/${id}" target="_blank">${id}</a>`;
+      
+      if (timestamp) {
+        const date = new Date(timestamp);
+        const formattedDate = date.toLocaleString();
+        li.innerHTML = `${link}<br><span class="timestamp">${formattedDate}</span>`;
+      } else {
+        li.innerHTML = link;
+      }
+      
       historyList.appendChild(li);
     });
   }

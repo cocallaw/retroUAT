@@ -25,6 +25,16 @@ ul {
   margin: 0;
 }
 
+li {
+  margin-bottom: 10px;
+}
+
+.timestamp {
+  font-size: 11px;
+  color: #666;
+  font-style: italic;
+}
+
 a {
   color: #0078d4;
   text-decoration: none;
