@@ -50,6 +50,7 @@ A Microsoft Edge browser extension that automatically redirects UAT Tracker link
 ### Option 2: Install from Source
 
 1. **Clone the Repository**
+
    ```bash
    git clone https://github.com/cocallaw/retroUAT.git
    cd retroUAT
@@ -107,9 +108,11 @@ All processing happens locally in your browser - no external servers or data col
 ## Development
 
 ### Building from Source
+
 The extension is built and packaged automatically using GitHub Actions whenever code is pushed to the main branch.
 
 The workflow (`.github/workflows/build-extension.yml`):
+
 1. Lints JavaScript files with ESLint
 2. Validates the manifest.json
 3. Packages the extension as a ZIP file
@@ -117,6 +120,7 @@ The workflow (`.github/workflows/build-extension.yml`):
 5. Creates a GitHub Release when a tag is pushed
 
 ### Project Structure
+
 ```
 retroUAT/
 ├── manifest.json       # Extension configuration
@@ -131,6 +135,7 @@ retroUAT/
 ## Permissions
 
 RetroUAT requires the following permissions:
+
 - **`storage`** - To save your preferences and redirect history locally
 - **`tabs`** - To detect and redirect UAT Tracker URLs
 - **`host_permissions`** - Only for `uatracker.microsoft.com` to detect relevant URLs
@@ -140,18 +145,11 @@ Your data stays private and local to your browser.
 ## Contributing
 
 Contributions are welcome! Feel free to:
+
 - Report bugs or request features via [Issues](https://github.com/cocallaw/retroUAT/issues)
 - Submit pull requests with improvements
 - Share feedback on the extension
 
-## License
-
-This project is open source and available for use within Microsoft.
-
 ## Support
 
 For questions or issues, please [open an issue](https://github.com/cocallaw/retroUAT/issues) on GitHub.
-
----
-
-Made with ❤️ to simplify UAT Tracker workflows
