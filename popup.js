@@ -3,17 +3,48 @@ document.addEventListener("DOMContentLoaded", async () => {
   const statusText = document.getElementById("statusText");
   const historyList = document.getElementById("historyList");
   const clearHistory = document.getElementById("clearHistory");
+  const toggleBadge = document.getElementById("toggleBadge");
 
-  const { enabled = true, history = [] } = await chrome.storage.local.get(["enabled", "history"]);
+  const { enabled = true, history = [], showBadge = true } = await chrome.storage.local.get(["enabled", "history", "showBadge"]);
 
   toggle.checked = enabled;
-  statusText.textContent = enabled ? "Redirects Enabled" : "Redirects Disabled";
+  toggleBadge.checked = showBadge;
 
   updateHistoryList(history);
 
   toggle.addEventListener("change", async () => {
     await chrome.storage.local.set({ enabled: toggle.checked });
-    statusText.textContent = toggle.checked ? "Redirects Enabled" : "Redirects Disabled";
+    
+    // Update the badge when toggled from popup (only if badge is enabled)
+    const { showBadge = true } = await chrome.storage.local.get("showBadge");
+    if (showBadge) {
+      if (toggle.checked) {
+        chrome.action.setBadgeText({ text: "ON" });
+        chrome.action.setBadgeBackgroundColor({ color: "#22c55e" }); // Green
+      } else {
+        chrome.action.setBadgeText({ text: "OFF" });
+        chrome.action.setBadgeBackgroundColor({ color: "#ef4444" }); // Red
+      }
+    }
+  });
+
+  toggleBadge.addEventListener("change", async () => {
+    await chrome.storage.local.set({ showBadge: toggleBadge.checked });
+    
+    // Update the badge immediately based on the new setting
+    if (toggleBadge.checked) {
+      // Show badge with current status
+      if (toggle.checked) {
+        chrome.action.setBadgeText({ text: "ON" });
+        chrome.action.setBadgeBackgroundColor({ color: "#22c55e" }); // Green
+      } else {
+        chrome.action.setBadgeText({ text: "OFF" });
+        chrome.action.setBadgeBackgroundColor({ color: "#ef4444" }); // Red
+      }
+    } else {
+      // Hide badge
+      chrome.action.setBadgeText({ text: "" });
+    }
   });
 
   clearHistory.addEventListener("click", async () => {

@@ -8,13 +8,22 @@
 <body>
   <div class="container">
     <h1>RetroUAT</h1>
-    <label class="switch">
-      <input type="checkbox" id="toggleRedirects">
-      <span class="slider"></span>
-    </label>
-    <span id="statusText">Redirects Enabled</span>
+    
+    <div class="checkbox-group">
+      <label>
+        <input type="checkbox" id="toggleRedirects">
+        <span id="statusText">Enable Redirects</span>
+      </label>
+    </div>
 
-    <h2>Recent IDs</h2>
+    <div class="checkbox-group">
+      <label>
+        <input type="checkbox" id="toggleBadge">
+        <span>Show Status</span>
+      </label>
+    </div>
+
+    <h2>Recent UATs</h2>
     <ul id="historyList"></ul>
 
     <button id="clearHistory">Clear History</button>
