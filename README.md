@@ -1,6 +1,6 @@
 # RetroUAT
 
-A Microsoft Edge browser extension that automatically redirects UAT Tracker links to their corresponding Azure DevOps work items.
+A Microsoft Edge browser extension that automatically redirects uatracker.microsoft.com links to their corresponding Azure DevOps work items.
 
 ![RetroUAT Popup](images/retroUATv1.png)
 
@@ -121,7 +121,7 @@ The workflow (`.github/workflows/build-extension.yml`):
 
 ### Project Structure
 
-```
+```shell
 retroUAT/
 ├── manifest.json       # Extension configuration
 ├── background.js       # Service worker for URL monitoring
