@@ -1,32 +1,38 @@
 # RetroUAT
 
-A Microsoft Edge browser extension that automatically redirects uatracker.microsoft.com links to their corresponding Azure DevOps work items.
+A Microsoft Edge browser extension that automatically redirects UAT Tracker and Feedback360 links to their corresponding Azure DevOps work items.
 
-![RetroUAT Popup](images/retroUATv1.png)
+![RetroUAT Popup](images/retroUATv2.png)
 
 ## Features
 
 ### 🔄 Automatic Redirects
 
-- Automatically detects when you visit UAT Tracker links (`uatracker.microsoft.com`)
-- Seamlessly redirects to the matching Azure DevOps work item
-- Works with any UAT ID - just visit the tracker link and you're instantly redirected
+- **UAT Tracker** - Automatically detects when you visit UAT Tracker links (`uatracker.microsoft.com`)
+  - Seamlessly redirects to the matching Azure DevOps work item
+  - Works with any UAT ID - just visit the tracker link and you're instantly redirected
+- **Feedback360** - Automatically detects when you visit Feedback360 issue pages (`feedback360.microsoft.com`)
+  - Waits for the page to load and extracts the ADO work item link
+  - Redirects to the corresponding Azure DevOps Technical Feedback work item
 
 ### ⚙️ Easy Control
 
-- **Toggle Redirects** - Enable or disable automatic redirects with a simple checkbox
-- **Keyboard Shortcut** - Quickly toggle redirects using `Ctrl+Shift+U` (or `Cmd+Shift+U` on Mac)
+- **Toggle UAT Redirects** - Enable or disable UAT Tracker redirects independently
+- **Toggle Feedback360 Redirects** - Enable or disable Feedback360 redirects independently
+- **Keyboard Shortcut** - Quickly toggle both redirects using `Ctrl+Shift+U` (or `Cmd+Shift+U` on Mac)
 - **Visual Status Badge** - Optional badge indicator on the extension icon shows when redirects are ON/OFF
-  - Green "ON" badge when redirects are enabled
-  - Red "OFF" badge when redirects are disabled
+  - Green "ON" badge when either redirect is enabled
+  - Red "OFF" badge when both redirects are disabled
   - Can be hidden via the "Show Status" checkbox
 
 ### 📝 Recent History
 
-- Tracks your last 5 redirected UAT IDs
+- Tracks your last 5 redirected items for both UAT and Feedback360
 - View timestamps for each redirect
+- **UAT History** - Shows UAT IDs with direct links to work items
+- **Feedback360 History** - Shows Feedback ID → Work Item ID mappings
 - Click any ID in history to quickly open that work item
-- Clear history anytime with one click
+- Clear all history anytime with one click
 
 ## Installation
 
@@ -67,29 +73,41 @@ A Microsoft Edge browser extension that automatically redirects uatracker.micros
 
 ### Basic Usage
 
+**For UAT Tracker:**
+
 1. Simply visit any UAT Tracker link (e.g., `https://uatracker.microsoft.com/?id=12345`)
 2. The extension will automatically redirect you to the Azure DevOps work item
 3. That's it! No configuration needed.
+
+**For Feedback360:**
+
+1. Visit any Feedback360 issue page (e.g., `https://feedback360.microsoft.com/issue?id=1388056`)
+2. The extension will wait for the page to load, extract the ADO work item link, and redirect
+3. You'll be taken directly to the Azure DevOps Technical Feedback work item
 
 ### Managing Settings
 
 1. Click the RetroUAT extension icon in your Microsoft Edge toolbar
 2. Use the checkboxes to:
-   - **Enable Redirects** - Turn automatic redirects on or off
+   - **Enable UAT Redirects** - Turn UAT Tracker redirects on or off
+   - **Enable Feedback360 Redirects** - Turn Feedback360 redirects on or off
    - **Show Status** - Display a badge on the extension icon showing current status
 
 ### Keyboard Shortcut
 
-- Press `Ctrl+Shift+U` (Windows/Linux) or `Cmd+Shift+U` (Mac) to quickly toggle redirects on/off
+- Press `Ctrl+Shift+U` (Windows/Linux) or `Cmd+Shift+U` (Mac) to quickly toggle both redirects on/off
 
 ### Viewing History
 
-- Click the extension icon to see your 5 most recent redirects
-- Each entry shows the UAT ID and timestamp
+- Click the extension icon to see your 5 most recent redirects for each type
+- **Recent UATs** section shows UAT IDs with timestamps
+- **Recent Feedback360** section shows Feedback ID → Work Item ID mappings
 - Click any ID to open that work item in Azure DevOps
-- Use "Clear History" to reset the list
+- Use "Clear All History" to reset both lists
 
 ## How It Works
+
+### UAT Tracker
 
 RetroUAT monitors your browsing for UAT Tracker URLs. When it detects a URL like:
 
@@ -101,6 +119,25 @@ It automatically redirects you to:
 
 ```html
 https://dev.azure.com/unifiedactiontracker/Unified%20Action%20Tracker/_workitems/edit/12345
+```
+
+### Feedback360
+
+When you visit a Feedback360 issue page like:
+
+```html
+https://feedback360.microsoft.com/issue?id=1388056
+```
+
+The extension:
+
+1. Waits for the page to fully load (with automatic retries)
+2. Searches for the "ADO Id link" button on the page
+3. Extracts the work item ID from the button's `name` attribute
+4. Constructs and redirects to the Azure DevOps URL:
+
+```html
+https://dev.azure.com/unifiedactiontracker/Technical%20Feedback/_workitems/edit/{workItemId}
 ```
 
 All processing happens locally in your browser - no external servers or data collection.
@@ -137,8 +174,9 @@ retroUAT/
 RetroUAT requires the following permissions:
 
 - **`storage`** - To save your preferences and redirect history locally
-- **`tabs`** - To detect and redirect UAT Tracker URLs
-- **`host_permissions`** - Only for `uatracker.microsoft.com` to detect relevant URLs
+- **`tabs`** - To detect and redirect URLs
+- **`scripting`** - To read page content for Feedback360 redirects
+- **`host_permissions`** - Only for `uatracker.microsoft.com` and `feedback360.microsoft.com` to detect relevant URLs
 
 Your data stays private and local to your browser.
 
