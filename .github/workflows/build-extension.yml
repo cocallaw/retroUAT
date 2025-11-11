@@ -1,0 +1,101 @@
+name: Build and Package RetroUAT Extension
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # --- Checkout Repo ---
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # --- Setup Node.js Environment ---
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # --- Install ESLint for linting ---
+      - name: Install ESLint
+        run: |
+          npm init -y
+          npm install eslint --save-dev
+          npx eslint --init || true  # create default config if missing
+
+      # --- Lint JS Files ---
+      - name: Run ESLint
+        run: npx eslint . --ext .js || echo "Lint warnings ignored"
+
+      # --- Validate manifest.json syntax ---
+      - name: Validate manifest.json
+        run: |
+          if ! jq empty manifest.json; then
+            echo "Invalid manifest.json format"
+            exit 1
+          fi
+          echo "manifest.json validated ✅"
+
+      # --- Create a versioned build folder ---
+      - name: Prepare Build Folder
+        run: |
+          mkdir -p dist/retroUAT
+          cp -r manifest.json background.js popup.html popup.js popup.css icons dist/retroUAT/
+          echo "Build folder prepared"
+
+      # --- Verify required files exist ---
+      - name: Verify Files
+        run: |
+          required_files=("manifest.json" "background.js" "popup.html" "popup.js" "popup.css")
+          for f in "${required_files[@]}"; do
+            if [ ! -f "dist/retroUAT/$f" ]; then
+              echo "Missing file: $f"
+              exit 1
+            fi
+          done
+          echo "All required files present ✅"
+
+      # --- Zip the extension for sideloading ---
+      - name: Package Extension
+        run: |
+          cd dist
+          zip -r retroUAT-extension.zip retroUAT
+          cd ..
+          echo "Extension packaged at dist/retroUAT-extension.zip ✅"
+
+      # --- Upload the ZIP as a workflow artifact ---
+      - name: Upload Packaged Extension
+        uses: actions/upload-artifact@v4
+        with:
+          name: retroUAT-extension
+          path: dist/retroUAT-extension.zip
+
+  # --- (Optional) Create a GitHub Release ---
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Extension Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: retroUAT-extension
+          path: dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/retroUAT-extension.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

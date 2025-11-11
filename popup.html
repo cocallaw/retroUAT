@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RetroUAT</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>RetroUAT</h1>
+    <label class="switch">
+      <input type="checkbox" id="toggleRedirects">
+      <span class="slider"></span>
+    </label>
+    <span id="statusText">Redirects Enabled</span>
+
+    <h2>Recent IDs</h2>
+    <ul id="historyList"></ul>
+
+    <button id="clearHistory">Clear History</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

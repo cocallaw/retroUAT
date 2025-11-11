@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "RetroUAT",
+  "version": "1.0.0",
+  "description": "Automatically redirect UAT Tracker links to the matching Azure DevOps item.",
+  "permissions": ["storage", "tabs", "scripting"],
+  "host_permissions": ["https://uatracker.microsoft.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "128": "icons/retroUAT_128.png"
+    }
+  },
+  "icons": {
+    "128": "icons/retroUAT_128.png"
+  },
+  "commands": {
+    "toggle-feature": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+U"
+      },
+      "description": "Toggle RetroUAT Redirects"
+    }
+  }
+}
