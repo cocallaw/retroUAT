@@ -1,10 +1,13 @@
 {
   "manifest_version": 3,
   "name": "RetroUAT",
-  "version": "1.0.0",
-  "description": "Automatically redirect UAT Tracker links to the matching Azure DevOps item.",
+  "version": "1.1.0",
+  "description": "Automatically redirect UAT Tracker and Feedback360 links to Azure DevOps work items.",
   "permissions": ["storage", "tabs", "scripting"],
-  "host_permissions": ["https://uatracker.microsoft.com/*"],
+  "host_permissions": [
+    "https://uatracker.microsoft.com/*",
+    "https://feedback360.microsoft.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },

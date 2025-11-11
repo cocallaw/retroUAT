@@ -12,7 +12,14 @@
     <div class="checkbox-group">
       <label>
         <input type="checkbox" id="toggleRedirects">
-        <span id="statusText">Enable Redirects</span>
+        <span id="statusText">Redirect UAT</span>
+      </label>
+    </div>
+
+    <div class="checkbox-group">
+      <label>
+        <input type="checkbox" id="toggleFeedback360">
+        <span>Redirect Feedback360</span>
       </label>
     </div>
 
@@ -26,7 +33,10 @@
     <h2>Recent UATs</h2>
     <ul id="historyList"></ul>
 
-    <button id="clearHistory">Clear History</button>
+    <h2>Recent Feedback360</h2>
+    <ul id="feedback360HistoryList"></ul>
+
+    <button id="clearHistory">Clear All History</button>
   </div>
 
   <script src="popup.js"></script>
